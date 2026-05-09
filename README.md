@@ -1,117 +1,128 @@
-# Sistema Operativo Cognitivo — Agente IA de Gestión de Proyectos
+# Executive Agenda
 
-> Un sistema modular de agente IA para planificación, seguimiento y coordinación de proyectos, con integración operativa a ClickUp.
+Asistente de agenda para ejecutivos — gestión de tareas, eventos, recordatorios y prioridades con sincronización opcional con Google Calendar e integración con OpenAI.
 
----
+## ¿Qué incluye?
 
-## Visión General
+- **Dashboard ejecutivo** — resumen diario, top prioridades, agenda del día y recordatorios próximos
+- **Gestión de tareas, eventos y recordatorios** via panel QuickAdd
+- **Detección automática de conflictos** en el calendario
+- **Sistema de priorización** configurable por pesos (urgencia, impacto, carga)
+- **Sincronización con Google Calendar** (opcional)
+- **Resumen diario con IA** vía OpenAI (opcional — funciona sin clave con respuestas locales)
+- **Autenticación JWT** de un solo usuario (perfil ejecutivo)
 
-Este sistema actúa como un **sistema operativo cognitivo**: el agente razona, planifica y decide de forma autónoma, mientras que ClickUp sirve como herramienta operativa externa para ejecutar y sincronizar tareas.
+## Stack
 
-**Principio fundamental:** La inteligencia vive en `/agent`. La interfaz y las integraciones viven en `/app`.
-
----
-
-## Estructura del Proyecto
-
-```
-/
-├── agent/                    # Núcleo cognitivo del sistema
-│   ├── agents/               # Perfiles de subagentes especializados
-│   ├── skills/               # Capacidades reutilizables del agente
-│   ├── directives/           # SOPs y procesos paso a paso
-│   ├── memory/               # Memoria persistente entre sesiones
-│   ├── execution/            # Scripts mecánicos de ejecución
-│   └── context/              # Reglas globales y visión del sistema
-│
-├── app/                      # Capa de aplicación y experiencia
-│   ├── frontend/             # Interfaz de usuario
-│   ├── backend/              # Lógica de servidor
-│   ├── api/                  # Endpoints y contratos de API
-│   └── integrations/
-│       └── clickup/          # Conector operativo con ClickUp
-│
-├── .env.example              # Variables de entorno requeridas
-└── README.md                 # Este archivo
-```
+| Capa | Tecnología |
+|------|-----------|
+| Framework | Next.js 14 (App Router) |
+| Base de datos | PostgreSQL (Supabase) + Prisma ORM |
+| Estilos | Tailwind CSS |
+| Auth | JWT con bcrypt |
+| IA | OpenAI GPT-4o-mini (opcional) |
+| Calendario | Google Calendar API (opcional) |
+| Deploy | Railway |
 
 ---
 
-## Separación de Responsabilidades
+## Instalación local
 
-| Capa | Contenido | Propósito |
-|------|-----------|-----------|
-| `/agent/agents` | Perfiles de subagentes | Definen identidad, rol y prioridades de cada agente |
-| `/agent/skills` | Capacidades del dominio | Describen cómo operar en cada área (no toman decisiones) |
-| `/agent/directives` | SOPs y flujos de trabajo | Procesos paso a paso con inputs, validaciones y outputs |
-| `/agent/memory` | Estado persistente | Única fuente de verdad entre sesiones |
-| `/agent/execution` | Scripts mecánicos | Acciones repetibles sin lógica de decisión |
-| `/agent/context` | Reglas globales | Sistema de creencias y principios de operación |
-| `/app` | Interfaz y aplicación | Todo lo visual, técnico y de infraestructura |
-| `/app/integrations/clickup` | Conector ClickUp | Comunicación con la API externa |
+### 1. Requisitos previos
 
----
+- Node.js 18+
+- Una base de datos PostgreSQL (puedes usar [Supabase](https://supabase.com) gratis)
 
-## Subagentes Disponibles
+### 2. Clonar e instalar
 
-| Agente | Responsabilidad Principal |
-|--------|--------------------------|
-| `project_manager_agent` | Coordinación global, priorización y seguimiento |
-| `planning_agent` | Planificación, hitos y estructura de tareas |
-| `risk_agent` | Detección de riesgos, bloqueos y dependencias |
-| `reporting_agent` | Informes, resúmenes ejecutivos y seguimiento semanal |
-| `operations_agent` | Tareas operativas y sincronización con ClickUp |
-
----
-
-## Flujo de Trabajo Típico
-
-```
-Usuario → project_manager_agent
-           ├── planning_agent      → genera estructura de tareas
-           ├── risk_agent          → detecta bloqueos y riesgos
-           ├── reporting_agent     → produce informes
-           └── operations_agent    → sincroniza con ClickUp
-                                       └── /app/integrations/clickup → API ClickUp
+```bash
+git clone https://github.com/vglena/Executive-Agenda.git
+cd Executive-Agenda/agenda-app
+npm install
 ```
 
+### 3. Configurar variables de entorno
+
+```bash
+cp .env.example .env.local
+```
+
+Edita `.env.local` con tus valores:
+
+```env
+# Base de datos (Supabase)
+DATABASE_URL="postgresql://postgres.[REF]:[PASS]@aws-0-[REGION].pooler.supabase.com:6543/postgres?pgbouncer=true"
+DIRECT_URL="postgresql://postgres.[REF]:[PASS]@aws-0-[REGION].pooler.supabase.com:5432/postgres"
+
+# JWT
+JWT_SECRET="<genera con: node -e \"console.log(require('crypto').randomBytes(32).toString('base64'))\">"
+
+# Acceso ejecutivo
+EXECUTIVE_EMAIL="ejecutivo@agenda.local"
+EXECUTIVE_PASSWORD_HASH="<genera con: npm run gen:hash -- 'TuContraseña'>"
+```
+
+> Las variables de Google Calendar y OpenAI son **opcionales**. Sin ellas el sistema funciona con adaptadores locales.
+
+### 4. Migrar la base de datos
+
+```bash
+npx prisma migrate deploy
+```
+
+### 5. Arrancar
+
+```bash
+npm run dev
+```
+
+Abre [http://localhost:3000](http://localhost:3000) en tu navegador.
+
 ---
 
-## Integración con ClickUp
+## Generación de credenciales
 
-ClickUp es una **herramienta operativa externa**, no el cerebro del sistema.
+**JWT Secret:**
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+```
 
-- La memoria interna (en `/agent/memory`) es la fuente principal de contexto.
-- ClickUp es la fuente operativa de tareas y estados.
-- La autenticación usa **Personal API Token** vía variables de entorno.
-- Las credenciales **nunca** se guardan en archivos Markdown.
-
-Ver: [`app/integrations/clickup/README.md`](app/integrations/clickup/README.md)
-
----
-
-## Compatibilidad
-
-Este sistema está diseñado para funcionar con:
-
-- **IDEs**: Cursor, VS Code, Windsurf, Claude Code, Antigravity
-- **Modelos IA**: GPT-4, Claude, Gemini, Llama, cualquier modelo compatible
-- **Formato**: Markdown como protocolo universal de configuración y contexto
+**Hash de contraseña:**
+```bash
+npm run gen:hash -- "TuContraseña"
+# Copia el valor "Base64 para .env" en EXECUTIVE_PASSWORD_HASH
+```
 
 ---
 
-## Inicio Rápido
+## Despliegue en Railway
 
-1. Copia `.env.example` a `.env` y completa tus credenciales.
-2. Lee [`agent/context/system_overview.md`](agent/context/system_overview.md) para entender el sistema.
-3. Revisa [`agent/context/operating_principles.md`](agent/context/operating_principles.md) para las reglas de operación.
-4. Activa el agente principal: [`agent/agents/project_manager_agent.md`](agent/agents/project_manager_agent.md).
-5. Sigue la directiva [`agent/directives/project_intake.md`](agent/directives/project_intake.md) para crear tu primer proyecto.
+1. Conecta este repositorio en [railway.app](https://railway.app)
+2. Establece el **Root Directory** como `agenda-app`
+3. Añade las variables de entorno del panel Variables de Railway
+4. Railway detecta automáticamente Next.js y despliega
+
+Consulta [`agenda-app/DEPLOYMENT.md`](agenda-app/DEPLOYMENT.md) para instrucciones detalladas.
 
 ---
 
-## Estado del Sistema
+## Estructura del repositorio
 
-- **Versión**: 0.1.0
-- **Fase**: Base estructural
-- **Fecha**: Mayo 2026
+```
+Executive-Agenda/
+├── agenda-app/          # Aplicación Next.js (la app)
+│   ├── app/             # Rutas y páginas (App Router)
+│   ├── components/      # Componentes UI
+│   ├── lib/             # Servicios, adaptadores, utilidades
+│   ├── pages/api/       # Endpoints REST
+│   ├── prisma/          # Schema y migraciones de BD
+│   └── .env.example     # Plantilla de variables de entorno
+├── agent/               # Sistema de gestión de proyectos (Project OS)
+└── app/                 # Integraciones y servicios del Project OS
+```
+
+---
+
+## Licencia
+
+MIT
