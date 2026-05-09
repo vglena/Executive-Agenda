@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #f7f5f0;
+  --foreground: #171717;
+  --surface: #fffefb;
+  --surface-muted: #f1eee7;
+  --border-soft: #e7e1d6;
+  --accent: #1d4ed8;
+  --accent-soft: #dbeafe;
+  --danger: #be123c;
+  --warning: #b45309;
+  --success: #047857;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+::selection {
+  background: #bfdbfe;
+  color: #111827;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .executive-shell {
+    background:
+      radial-gradient(circle at top left, rgba(255, 255, 255, 0.9), transparent 26rem),
+      linear-gradient(180deg, #fbfaf7 0%, #f4f1eb 52%, #f7f5f0 100%);
+  }
+
+  .executive-surface {
+    background: rgba(255, 254, 251, 0.92);
+    border-color: rgba(214, 205, 190, 0.72);
+    box-shadow: 0 18px 50px rgba(31, 41, 55, 0.07);
+  }
+
+  .tap-target {
+    min-height: 44px;
+  }
+}

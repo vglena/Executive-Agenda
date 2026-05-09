@@ -1,0 +1,71 @@
+{
+  "name": "agenda-app",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "dev": "tsx watch server.ts",
+    "build": "next build",
+    "start": "tsx server.ts",
+    "start:prod": "prisma migrate deploy && tsx server.ts",
+    "lint": "next lint",
+    "postinstall": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:studio": "prisma studio",
+    "gen:hash": "tsx scripts/gen-hash.ts",
+    "verify:priorities": "tsx scripts/verify-priorities.ts",
+    "verify:scheduler": "tsx scripts/verify-scheduler.ts",
+    "verify:tasks": "tsx scripts/verify-tasks.ts",
+    "verify:events": "tsx scripts/verify-events.ts",
+    "verify:reminders": "tsx scripts/verify-reminders.ts",
+    "verify:dashboard": "tsx scripts/verify-dashboard.ts",
+    "verify:quickadd": "tsx scripts/verify-quickadd.ts",
+    "verify:priorities-page": "tsx scripts/verify-priorities-page.ts",
+    "verify:google-oauth": "tsx scripts/verify-google-oauth.ts",
+    "verify:calendar-sync": "tsx scripts/verify-calendar-sync.ts",
+    "verify:conflicts": "tsx scripts/verify-conflicts.ts",
+    "verify:integration": "tsx scripts/verify-integration.ts",
+    "verify:load": "tsx scripts/verify-load.ts",
+    "verify:security": "tsx scripts/verify-security.ts",
+    "verify:production": "tsx scripts/verify-production.ts",
+    "verify:all": "tsx scripts/verify-all.ts",
+    "verify:all:fast": "tsx scripts/verify-all.ts -- --skip-load"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
+    "bcryptjs": "^3.0.3",
+    "googleapis": "^171.4.0",
+    "jose": "^6.2.3",
+    "jsonwebtoken": "^9.0.3",
+    "next": "14.2.35",
+    "node-cron": "^4.2.1",
+    "openai": "^6.37.0",
+    "pg": "^8.20.0",
+    "prisma": "^7.8.0",
+    "react": "^18",
+    "react-dom": "^18",
+    "tsx": "^4.21.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^20",
+    "@types/node-cron": "^3.0.11",
+    "@types/pg": "^8.20.0",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "dotenv": "^17.4.2",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  }
+}

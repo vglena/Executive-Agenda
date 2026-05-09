@@ -1,0 +1,114 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ── Ejecutivo ──────────────────────────────────────────────
+// Una sola fila en producción. Se crea vía seed.
+model Executive {
+  id                     String   @id @default(uuid())
+  nombre                 String
+  zona_horaria           String   @default("America/Mexico_City")
+  horario_laboral_inicio String   @default("08:00")
+  horario_laboral_fin    String   @default("19:00")
+  dias_laborables        String[] @default(["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"])
+  hora_resumen_diario    String   @default("07:30")
+  google_calendar_token  Json?    // tokens OAuth cifrados — null si no conectado
+  created_at             DateTime @default(now())
+}
+
+// ── Evento ────────────────────────────────────────────────
+model Event {
+  id                  String     @id @default(uuid())
+  titulo              String
+  fecha               DateTime   @db.Date
+  hora_inicio         String     // "09:00"
+  hora_fin            String     // "10:00"
+  descripcion         String?
+  ubicacion           String?                       // lugar físico u online
+  origen              String     @default("manual") // "manual" | "google_calendar"
+  id_externo          String?    @unique             // ID de Google — null si manual
+  sincronizado        Boolean    @default(false)
+  conflicto_detectado Boolean    @default(false)
+  estado              String     @default("activo")  // "activo" | "cancelado"
+  created_at          DateTime   @default(now())
+  reminders           Reminder[]
+  conflictos_google   Conflict[] @relation("ConflictGoogle")
+  conflictos_manual   Conflict[] @relation("ConflictManual")
+}
+
+// ── Conflicto de calendario ───────────────────────────────
+// Registra solapamientos horarios entre un evento de Google y uno manual.
+// Estado: "pendiente" | "revisado" | "ignorado"
+// No se resuelve automáticamente — requiere confirmación del usuario.
+model Conflict {
+  id               String    @id @default(uuid())
+  evento_google_id String
+  evento_manual_id String
+  estado           String    @default("pendiente") // "pendiente" | "revisado" | "ignorado"
+  nota             String?                         // nota libre del usuario al resolver
+  detected_at      DateTime  @default(now())
+  resolved_at      DateTime?
+  evento_google    Event     @relation("ConflictGoogle", fields: [evento_google_id], references: [id], onDelete: Cascade)
+  evento_manual    Event     @relation("ConflictManual", fields: [evento_manual_id], references: [id], onDelete: Cascade)
+
+  @@unique([evento_google_id, evento_manual_id]) // evita duplicados
+}
+
+// ── Tarea ─────────────────────────────────────────────────
+model Task {
+  id               String    @id @default(uuid())
+  titulo           String                           // único campo obligatorio
+  descripcion      String?
+  fecha_limite     DateTime? @db.Date
+  prioridad_manual String    @default("P3")         // "P1" | "P2" | "P3" | "P4"
+  estado           String    @default("pendiente")  // "pendiente" | "completada"
+  created_at       DateTime  @default(now())
+  completed_at     DateTime?
+  reminder         Reminder?
+}
+
+// ── Recordatorio ──────────────────────────────────────────
+model Reminder {
+  id                 String   @id @default(uuid())
+  entidad_tipo       String                          // "tarea" | "evento"
+  task_id            String?  @unique
+  event_id           String?
+  antelacion_tipo    String                          // "15min"|"30min"|"1h"|"3h"|"1dia"|"personalizado"
+  fecha_hora_disparo DateTime
+  mensaje            String?                         // texto personalizado opcional
+  origen             String   @default("usuario")   // "usuario" | "sugerido"
+  estado             String   @default("activo")    // "activo" | "disparado" | "cancelado"
+  task               Task?    @relation(fields: [task_id], references: [id], onDelete: Cascade)
+  event              Event?   @relation(fields: [event_id], references: [id], onDelete: Cascade)
+}
+
+// ── Priorización Diaria ───────────────────────────────────
+model DailyPriority {
+  id                    String   @id @default(uuid())
+  fecha                 DateTime @unique @db.Date
+  tareas_rankeadas      String[]                    // IDs de tareas en orden (máx 5)
+  scores                Json                        // { taskId: number }
+  justificaciones       Json                        // { taskId: string } — generado por LLM
+  tareas_rechazadas_hoy String[]
+  estado                String   @default("vigente")
+  generated_at          DateTime @default(now())
+  recalculated_at       DateTime?
+}
+
+// ── Resumen Diario ────────────────────────────────────────
+model DailySummary {
+  id                  String   @id @default(uuid())
+  fecha               DateTime @unique @db.Date
+  contenido_completo  String                        // ≤300 palabras — generado por LLM
+  eventos_del_dia     String[]                      // IDs de Event
+  tareas_vencidas     String[]                      // IDs de Task
+  tareas_prioritarias String[]                      // IDs de Task (top 3)
+  sugerencia_del_dia  String                        // 1 frase — generado por LLM
+  estado              String   @default("generado")
+  generated_at        DateTime @default(now())
+}
