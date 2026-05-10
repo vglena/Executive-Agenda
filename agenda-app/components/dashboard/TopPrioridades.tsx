@@ -53,16 +53,16 @@ export function TopPrioridades({
         />
       )}
       {!loading && !error && tareas.length > 0 && (
-        <ol className="space-y-3">
+        <ol className="space-y-0 divide-y divide-stone-100">
           {tareas.map((t) => (
-            <li key={t.id} className="flex items-start gap-3 rounded-lg bg-white/70 p-3 ring-1 ring-stone-100">
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-stone-950 text-xs font-semibold leading-none text-white tabular-nums">
+            <li key={t.id} className="flex items-start gap-3 py-3 first:pt-0 last:pb-0">
+              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-stone-950 text-[11px] font-semibold leading-none text-white tabular-nums">
                 {t.posicion}
               </span>
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-semibold text-stone-950">{t.titulo}</p>
+                <p className="text-sm font-semibold leading-snug text-stone-950">{t.titulo}</p>
                 {t.justificacion && (
-                  <p className="mt-1 text-xs leading-snug text-stone-500">{t.justificacion}</p>
+                  <p className="mt-0.5 text-xs leading-snug text-stone-400">{t.justificacion}</p>
                 )}
                 {t.fecha_limite ? (
                   <p className="mt-1 text-xs text-stone-400">

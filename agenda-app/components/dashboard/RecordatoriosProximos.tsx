@@ -34,12 +34,12 @@ export function RecordatoriosProximos({ refreshKey = 0 }: { refreshKey?: number 
         />
       )}
       {!loading && !error && recordatorios.length > 0 && (
-        <ul className="space-y-3">
+        <ul className="space-y-0 divide-y divide-stone-100">
           {recordatorios.map((r) => (
-            <li key={r.id} className="flex items-start gap-3 rounded-lg px-1 py-1">
-              <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-amber-500" title="Recordatorio" />
+            <li key={r.id} className="flex items-start gap-2.5 py-2.5 first:pt-0 last:pb-0">
+              <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-amber-400" />
               <div className="min-w-0 flex-1">
-                <p className="text-sm text-stone-800">
+                <p className="text-sm leading-snug text-stone-800">
                   {r.mensaje ??
                     (r.entidad_tipo === 'tarea'
                       ? 'Recordatorio de tarea'

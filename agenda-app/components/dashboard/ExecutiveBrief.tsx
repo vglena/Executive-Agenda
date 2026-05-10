@@ -124,7 +124,7 @@ export function ExecutiveBrief({
               {loading ? 'Preparando tu día' : dayState}
             </h1>
           </div>
-          {topPriority && (
+          {dayState === 'Requiere atención' && (
             <span className="rounded-full bg-amber-100 px-3 py-1 text-[11px] font-semibold text-amber-900 ring-1 ring-amber-200">
               Requiere atención
             </span>
@@ -144,15 +144,15 @@ export function ExecutiveBrief({
             </p>
 
             <div className="mt-5 grid grid-cols-3 gap-1.5 sm:gap-2">
-              <div className="rounded-xl bg-white/8 px-2.5 py-3 ring-1 ring-white/10 sm:px-3">
+              <div className="rounded-xl bg-white/[0.08] px-2.5 py-3 ring-1 ring-white/10 sm:px-3">
                 <p className="text-xl font-semibold tabular-nums">{events.length}</p>
                 <p className="mt-0.5 text-[11px] text-stone-300">reuniones</p>
               </div>
-              <div className="rounded-xl bg-white/8 px-2.5 py-3 ring-1 ring-white/10 sm:px-3">
+              <div className="rounded-xl bg-white/[0.08] px-2.5 py-3 ring-1 ring-white/10 sm:px-3">
                 <p className="text-xl font-semibold tabular-nums">{priorities.slice(0, 3).length}</p>
                 <p className="mt-0.5 text-[11px] text-stone-300">foco</p>
               </div>
-              <div className="rounded-xl bg-white/8 px-2.5 py-3 ring-1 ring-white/10 sm:px-3">
+              <div className="rounded-xl bg-white/[0.08] px-2.5 py-3 ring-1 ring-white/10 sm:px-3">
                 <p className="text-xl font-semibold tabular-nums">{conflictCount + overdueCount}</p>
                 <p className="mt-0.5 text-[11px] text-stone-300">alertas</p>
               </div>

@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
 import { getToken, clearToken } from '@/lib/api/client'
 import { AgendaDelDia } from '@/components/dashboard/AgendaDelDia'
 import { TopPrioridades } from '@/components/dashboard/TopPrioridades'
@@ -12,17 +11,8 @@ import { ResumenDiario } from '@/components/dashboard/ResumenDiario'
 import { QuickAddPanel } from '@/components/quickadd/QuickAddPanel'
 import { ConflictosCalendario } from '@/components/dashboard/ConflictosCalendario'
 import { ExecutiveBrief } from '@/components/dashboard/ExecutiveBrief'
-
-function formatFechaHoy(): string {
-  const raw = new Date().toLocaleDateString('es', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })
-  const lowered = raw.toLowerCase()
-  return lowered.charAt(0).toUpperCase() + lowered.slice(1)
-}
+import { AppHeader } from '@/components/ui/AppHeader'
+import { BottomNav } from '@/components/ui/BottomNav'
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -92,43 +82,16 @@ export default function DashboardPage() {
   if (!ready) return null
 
   return (
-    <div className="min-h-screen executive-shell">
-      <header className="sticky top-0 z-10 border-b border-stone-200/80 bg-white/85 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4">
-          <div className="min-w-0">
-            <h1 className="text-base font-semibold text-stone-950">Hoy</h1>
-            <p className="mt-0.5 truncate text-xs capitalize text-stone-500">{formatFechaHoy()}</p>
-          </div>
-          <div className="flex shrink-0 items-center gap-1 overflow-x-auto">
-            {googleConnected && (
-              <button
-                onClick={handleSyncGoogle}
-                disabled={syncing}
-                className="tap-target whitespace-nowrap rounded-lg px-3 py-2 text-xs font-medium text-blue-700 transition-colors hover:bg-blue-50 disabled:opacity-50"
-              >
-                {syncing ? 'Actualizando...' : 'Sync'}
-              </button>
-            )}
-            <Link
-              href="/priorities"
-              className="tap-target whitespace-nowrap rounded-lg px-3 py-2 text-xs font-medium text-stone-500 transition-colors hover:bg-stone-100 hover:text-stone-800"
-            >
-              Foco
-            </Link>
-            <button
-              onClick={handleLogout}
-              className="tap-target whitespace-nowrap rounded-lg px-3 py-2 text-xs font-medium text-stone-500 transition-colors hover:bg-stone-100 hover:text-stone-800"
-            >
-              Salir
-            </button>
-          </div>
-        </div>
-        {syncMsg && (
-          <div className="border-t border-blue-100 bg-blue-50 px-4 py-2 text-xs text-blue-700 sm:px-6">
-            {syncMsg}
-          </div>
-        )}
-      </header>
+    <div className="min-h-screen executive-shell pb-16 sm:pb-0">
+      <AppHeader
+        showSync={googleConnected}
+        syncing={syncing}
+        onSync={handleSyncGoogle}
+        showFoco
+        showSignOut
+        onSignOut={handleLogout}
+        syncMessage={syncMsg}
+      />
 
       <main className="mx-auto max-w-6xl space-y-3 px-3 py-3 sm:space-y-4 sm:px-6 sm:py-6">
         <ExecutiveBrief refreshKey={refreshKey} googleConnected={googleConnected} />
@@ -138,7 +101,9 @@ export default function DashboardPage() {
           <AgendaDelDia refreshKey={refreshKey} />
         </div>
 
-        <QuickAddPanel onCreated={handleCreated} />
+        <div id="quickadd" className="scroll-mt-16">
+          <QuickAddPanel onCreated={handleCreated} />
+        </div>
 
         {googleConnected && (
           <ConflictosCalendario
@@ -154,6 +119,8 @@ export default function DashboardPage() {
           <RecordatoriosProximos refreshKey={refreshKey} />
         </div>
       </main>
+
+      <BottomNav />
     </div>
   )
 }

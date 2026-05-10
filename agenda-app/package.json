@@ -31,6 +31,7 @@
     "verify:integration": "tsx scripts/verify-integration.ts",
     "verify:load": "tsx scripts/verify-load.ts",
     "verify:security": "tsx scripts/verify-security.ts",
+    "verify:sanitize": "tsx scripts/verify-sanitize.ts",
     "verify:production": "tsx scripts/verify-production.ts",
     "verify:all": "tsx scripts/verify-all.ts",
     "verify:all:fast": "tsx scripts/verify-all.ts -- --skip-load"

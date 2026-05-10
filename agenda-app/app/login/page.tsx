@@ -41,21 +41,21 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+    <main className="min-h-screen executive-shell flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
-        <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">Agenda Ejecutiva</h1>
-          <p className="text-sm text-gray-500 mt-1">Inicia sesión para continuar</p>
+        <div className="mb-8 text-center">
+          <h1 className="text-2xl font-semibold tracking-tight text-stone-950">Agenda Ejecutiva</h1>
+          <p className="mt-1 text-sm text-stone-400">Inicia sesión para continuar</p>
         </div>
 
         <form
           onSubmit={handleSubmit}
-          className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 space-y-4"
+          className="rounded-2xl bg-white p-6 ring-1 ring-stone-200/80 space-y-4"
         >
           <div>
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="block text-xs font-medium text-stone-500 mb-1.5"
             >
               Email
             </label>
@@ -66,7 +66,7 @@ export default function LoginPage() {
               onChange={(e) => setEmail(e.target.value)}
               required
               autoComplete="email"
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+              className="tap-target w-full rounded-xl border border-stone-200 bg-white px-4 text-sm text-stone-950 outline-none transition placeholder:text-stone-300 focus:border-stone-400 focus:ring-4 focus:ring-stone-200/60"
               placeholder="ejecutivo@agenda.local"
             />
           </div>
@@ -74,7 +74,7 @@ export default function LoginPage() {
           <div>
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="block text-xs font-medium text-stone-500 mb-1.5"
             >
               Contraseña
             </label>
@@ -85,12 +85,12 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               required
               autoComplete="current-password"
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+              className="tap-target w-full rounded-xl border border-stone-200 bg-white px-4 text-sm text-stone-950 outline-none transition focus:border-stone-400 focus:ring-4 focus:ring-stone-200/60"
             />
           </div>
 
           {error && (
-            <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">
+            <p className="rounded-xl bg-rose-50 px-3 py-2.5 text-sm text-rose-700 ring-1 ring-rose-100">
               {error}
             </p>
           )}
@@ -98,7 +98,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gray-900 text-white rounded-lg py-2 text-sm font-medium hover:bg-gray-700 disabled:opacity-50 transition-colors"
+            className="tap-target w-full justify-center rounded-xl bg-stone-950 text-sm font-semibold text-white transition hover:bg-stone-800 disabled:opacity-50"
           >
             {loading ? 'Entrando…' : 'Iniciar sesión'}
           </button>

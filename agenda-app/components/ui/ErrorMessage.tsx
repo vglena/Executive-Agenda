@@ -4,6 +4,8 @@ interface ErrorMessageProps {
 
 export function ErrorMessage({ message }: ErrorMessageProps) {
   return (
-    <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{message}</p>
+    <p className="rounded-xl bg-rose-50 px-3 py-2.5 text-sm text-rose-700 ring-1 ring-rose-100">
+      {message}
+    </p>
   )
 }

@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/db'
 import { getLLMAdapter } from '@/lib/ai'
 import { getLocalTime } from '@/lib/utils/time'
+import { sanitizeLLMText } from '@/lib/security/sanitize'
 import type { SummaryContext } from '@/lib/ai/types'
 
 /**
@@ -78,6 +79,10 @@ export async function generateDailySummary(): Promise<void> {
     contenido = 'Resumen no disponible — error al contactar el servicio de IA.'
     sugerencia = ''
   }
+
+  // Sanitizar output del LLM antes de persistir en DB
+  contenido = sanitizeLLMText(contenido)
+  sugerencia = sanitizeLLMText(sugerencia)
 
   await prisma.dailySummary.create({
     data: {

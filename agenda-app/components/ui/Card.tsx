@@ -10,9 +10,9 @@ interface CardProps {
 }
 
 const TONES = {
-  default: 'executive-surface border shadow-sm',
-  quiet: 'bg-transparent border border-transparent shadow-none',
-  elevated: 'bg-white border border-stone-200 shadow-[0_18px_45px_rgba(31,41,55,0.10)]',
+  default: 'bg-white ring-1 ring-stone-200/80',
+  quiet: 'bg-transparent',
+  elevated: 'bg-white shadow-[0_4px_24px_rgba(28,25,23,0.08)] ring-1 ring-stone-200/60',
 }
 
 export function Card({
@@ -24,14 +24,14 @@ export function Card({
   tone = 'default',
 }: CardProps) {
   return (
-    <section className={`rounded-xl ${TONES[tone]} ${className}`}>
-      <div className="px-4 py-3 sm:px-5 sm:py-4 flex items-start justify-between gap-3">
+    <section className={`rounded-2xl ${TONES[tone]} ${className}`}>
+      <div className="flex items-start justify-between gap-3 px-4 py-4 sm:px-5">
         <div className="min-w-0">
-          <h2 className="text-sm font-semibold text-stone-950 tracking-normal">
+          <h2 className="text-sm font-semibold tracking-normal text-stone-950">
             {title}
           </h2>
           {description && (
-            <p className="text-xs text-stone-500 mt-0.5 leading-snug">{description}</p>
+            <p className="mt-0.5 text-xs leading-snug text-stone-400">{description}</p>
           )}
         </div>
         {action && <div className="shrink-0">{action}</div>}

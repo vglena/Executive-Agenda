@@ -7,12 +7,15 @@
   --foreground: #171717;
   --surface: #fffefb;
   --surface-muted: #f1eee7;
-  --border-soft: #e7e1d6;
+  --border-soft: rgba(214, 205, 190, 0.6);
   --accent: #1d4ed8;
   --accent-soft: #dbeafe;
   --danger: #be123c;
   --warning: #b45309;
   --success: #047857;
+  /* Shadows */
+  --shadow-card: 0 1px 3px rgba(28, 25, 23, 0.06), 0 4px 14px rgba(28, 25, 23, 0.04);
+  --shadow-hero: 0 24px 70px rgba(28, 25, 23, 0.22);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,13 +25,30 @@
   }
 }
 
+@layer base {
+  *,
+  *::before,
+  *::after {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    /* Prevent font size adjustment on orientation change */
+    -webkit-text-size-adjust: 100%;
+  }
+}
+
 body {
   color: var(--foreground);
   background: var(--background);
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  /* Prevent overscroll bounce on iOS except where needed */
+  overscroll-behavior-y: none;
 }
 
 button,
@@ -55,12 +75,34 @@ textarea {
   }
 
   .executive-surface {
-    background: rgba(255, 254, 251, 0.92);
-    border-color: rgba(214, 205, 190, 0.72);
-    box-shadow: 0 18px 50px rgba(31, 41, 55, 0.07);
+    background: rgba(255, 254, 251, 0.94);
+    border-color: var(--border-soft);
+    box-shadow: var(--shadow-card);
   }
 
+  /* Minimum 44pt touch target */
   .tap-target {
     min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* Subtle press feedback for buttons */
+  .tap-target:active:not(:disabled) {
+    transform: scale(0.98);
+    transition: transform 80ms ease;
+  }
+
+  /* Safe area bottom padding — home indicator on iPhone/Android */
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* Section card — lightweight surface */
+  .section-card {
+    background: #fff;
+    border-radius: 1rem;
+    box-shadow: var(--shadow-card);
+    ring: 1px solid rgba(214, 205, 190, 0.5);
   }
 }

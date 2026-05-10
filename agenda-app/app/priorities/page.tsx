@@ -1,14 +1,16 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { apiFetch, clearToken, getToken } from '@/lib/api/client'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { ErrorMessage } from '@/components/ui/ErrorMessage'
 import { Spinner } from '@/components/ui/Spinner'
+import { AppHeader } from '@/components/ui/AppHeader'
+import { BottomNav } from '@/components/ui/BottomNav'
 import type { DailySummary, PriorityTask } from '@/lib/types/api'
 import { formatDateTime, formatRelativeDate, formatTaskDeadline } from '@/lib/utils/display-time'
+import { sanitizeLLMText } from '@/lib/security/sanitize'
 
 interface PrioritiesResponse {
   fecha: string
@@ -94,7 +96,7 @@ function FocusCard({
       </div>
 
       <p className="mt-3 text-sm leading-relaxed text-stone-600">
-        {task.justificacion || 'La app lo destaca por señales operativas del día.'}
+        {sanitizeLLMText(task.justificacion) || 'La app lo destaca por señales operativas del día.'}
       </p>
 
       <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-stone-500">
@@ -221,7 +223,7 @@ function FocusSection() {
                 {laterTasks.map((task) => (
                   <li key={task.id} className="flex items-start justify-between gap-3 border-t border-stone-100 pt-3 first:border-t-0 first:pt-0">
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-medium text-stone-800">{task.titulo}</p>
+                      <p className="line-clamp-2 text-sm font-medium text-stone-800">{task.titulo}</p>
                       <p className="mt-0.5 text-xs text-stone-400">{whenLabel(task)}</p>
                     </div>
                     <span className="shrink-0 rounded-full bg-stone-100 px-2 py-1 text-[11px] font-semibold text-stone-500">
@@ -305,13 +307,13 @@ function DailySummarySection() {
           <div className="space-y-5">
             {data.sugerencia_del_dia && (
               <div className="rounded-xl bg-blue-50 px-4 py-3 ring-1 ring-blue-100">
-                <p className="text-xs font-semibold uppercase text-blue-700">Siguiente señal</p>
-                <p className="mt-1 text-sm leading-relaxed text-blue-950">{data.sugerencia_del_dia}</p>
+                <p className="text-xs font-semibold uppercase text-blue-700">Sugerencia del asistente</p>
+                <p className="mt-1 text-sm leading-relaxed text-blue-950">{sanitizeLLMText(data.sugerencia_del_dia)}</p>
               </div>
             )}
 
             <div className="space-y-3 text-sm leading-relaxed text-stone-700">
-              {data.contenido_completo.split('\n').map((line, i) => {
+              {sanitizeLLMText(data.contenido_completo).split('\n').map((line, i) => {
                 if (line.startsWith('## ')) {
                   return (
                     <h3 key={i} className="pt-1 font-semibold text-stone-950">
@@ -365,34 +367,21 @@ export default function PrioritiesPage() {
   if (!ready) return null
 
   return (
-    <div className="min-h-screen executive-shell">
-      <header className="sticky top-0 z-10 border-b border-stone-200/80 bg-white/85 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4">
-          <div className="flex min-w-0 items-center gap-3">
-            <Link
-              href="/dashboard"
-              className="tap-target rounded-lg px-2 text-xs font-medium text-stone-500 transition hover:bg-stone-100 hover:text-stone-800"
-            >
-              Dashboard
-            </Link>
-            <div className="min-w-0">
-              <h1 className="text-base font-semibold text-stone-950">Foco</h1>
-              <p className="mt-0.5 truncate text-xs capitalize text-stone-500">{formatFechaHoy()}</p>
-            </div>
-          </div>
-          <button
-            onClick={handleLogout}
-            className="tap-target rounded-lg px-3 text-xs font-medium text-stone-500 transition hover:bg-stone-100 hover:text-stone-800"
-          >
-            Salir
-          </button>
-        </div>
-      </header>
+    <div className="min-h-screen executive-shell pb-16 sm:pb-0">
+      <AppHeader
+        title="Foco"
+        backHref="/dashboard"
+        backLabel="Dashboard"
+        showSignOut
+        onSignOut={handleLogout}
+      />
 
       <main className="mx-auto max-w-5xl space-y-5 px-4 py-4 sm:px-6 sm:py-6">
         <FocusSection />
         <DailySummarySection />
       </main>
+
+      <BottomNav />
     </div>
   )
 }
