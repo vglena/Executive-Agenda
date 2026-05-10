@@ -89,30 +89,65 @@ function TaskRow({
   task,
   slot,
   onComplete,
+  onUpdate,
+  onDelete,
 }: {
   task: Task
   slot: Slot
   onComplete: (id: string) => void
+  onUpdate: (id: string, updates: { titulo: string; fecha_limite: string | null }) => void
+  onDelete: (id: string) => void
 }) {
   const [completing, setCompleting] = useState(false)
+  const [expanded, setExpanded] = useState(false)
+  const [editTitle, setEditTitle] = useState(task.titulo)
+  const [editDate, setEditDate] = useState(task.fecha_limite ?? '')
+  const [saving, setSaving] = useState(false)
 
   async function handleComplete() {
     setCompleting(true)
-    onComplete(task.id) // optimistic remove
+    onComplete(task.id)
     try {
       await apiFetch(`/api/tasks/${task.id}`, {
         method: 'PUT',
         body: JSON.stringify({ estado: 'completada' }),
       })
     } catch {
-      // silently fail — task already removed from view; user can refresh if needed
+      // silently fail
+    }
+  }
+
+  async function handleSave() {
+    setSaving(true)
+    const titulo = editTitle.trim() || task.titulo
+    const fecha_limite = editDate || null
+    try {
+      await apiFetch(`/api/tasks/${task.id}`, {
+        method: 'PUT',
+        body: JSON.stringify({ titulo, fecha_limite }),
+      })
+      onUpdate(task.id, { titulo, fecha_limite })
+      setExpanded(false)
+    } catch {
+      // silently fail
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  async function handleDelete() {
+    onDelete(task.id)
+    try {
+      await apiFetch(`/api/tasks/${task.id}`, { method: 'DELETE' })
+    } catch {
+      // silently fail
     }
   }
 
   const impact = impactLabel(task.prioridad_manual)
   const titleColor =
     slot === 'vencida'
-      ? 'text-rose-800 font-semibold'
+      ? 'text-stone-500 font-normal'
       : slot === 'hoy'
         ? 'text-stone-950 font-medium'
         : slot === 'semana'
@@ -120,35 +155,93 @@ function TaskRow({
           : 'text-stone-500'
 
   return (
-    <li className="flex items-center gap-0 py-2 first:pt-0 last:pb-0">
-      <CompleteButton onComplete={handleComplete} completing={completing} slot={slot} />
-      <div className="min-w-0 flex-1">
-        <p className={`text-sm leading-snug ${titleColor}`}>{task.titulo}</p>
-        <div className="mt-0.5 flex items-center gap-2">
-          <span
-            className={`text-xs tabular-nums ${
-              slot === 'vencida'
-                ? 'font-medium text-rose-500'
-                : slot === 'hoy'
+    <li className="py-2 first:pt-0 last:pb-0">
+      <div className="flex items-center gap-0">
+        <CompleteButton onComplete={handleComplete} completing={completing} slot={slot} />
+        <div className="min-w-0 flex-1">
+          <p className={`text-sm leading-snug ${titleColor}`}>{task.titulo}</p>
+          <div className="mt-0.5 flex items-center gap-2">
+            <span
+              className={`text-xs tabular-nums ${
+                slot === 'hoy'
                   ? 'text-blue-500'
                   : 'text-stone-400'
-            }`}
-          >
-            {formatRelativeDate(task.fecha_limite)}
-          </span>
-          {impact && (
-            <span
-              className={`rounded-full px-1.5 py-px text-[10px] font-semibold leading-none ${
-                impact === 'Urgente'
-                  ? 'bg-amber-100 text-amber-700'
-                  : 'bg-stone-100 text-stone-500'
               }`}
             >
-              {impact}
+              {formatRelativeDate(task.fecha_limite)}
             </span>
-          )}
+            {impact && (
+              <span
+                className={`rounded-full px-1.5 py-px text-[10px] font-semibold leading-none ${
+                  impact === 'Urgente'
+                    ? 'bg-amber-100 text-amber-700'
+                    : 'bg-stone-100 text-stone-500'
+                }`}
+              >
+                {impact}
+              </span>
+            )}
+          </div>
         </div>
+        {/* Options button */}
+        <button
+          onClick={() => setExpanded((v) => !v)}
+          aria-label="Opciones de tarea"
+          className="tap-target -mr-1 flex shrink-0 items-center justify-center rounded-lg p-1.5 text-stone-300 transition hover:bg-stone-100 hover:text-stone-500"
+        >
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 16 16"
+            fill="currentColor"
+            aria-hidden
+          >
+            <circle cx="8" cy="3" r="1.2" />
+            <circle cx="8" cy="8" r="1.2" />
+            <circle cx="8" cy="13" r="1.2" />
+          </svg>
+        </button>
       </div>
+
+      {/* Inline edit / delete */}
+      {expanded && (
+        <div className="ml-6 mt-2 space-y-2">
+          <input
+            type="text"
+            value={editTitle}
+            onChange={(e) => setEditTitle(e.target.value)}
+            className="w-full rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm text-stone-950 outline-none focus:border-stone-400 focus:ring-2 focus:ring-stone-200/60"
+            placeholder="Título de la tarea"
+          />
+          <input
+            type="date"
+            value={editDate}
+            onChange={(e) => setEditDate(e.target.value)}
+            className="w-full rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm text-stone-950 outline-none focus:border-stone-400"
+          />
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className="tap-target rounded-lg bg-stone-950 px-3 text-xs font-semibold text-white transition hover:bg-stone-800 disabled:opacity-50"
+            >
+              {saving ? 'Guardando…' : 'Guardar'}
+            </button>
+            <button
+              onClick={handleDelete}
+              className="tap-target rounded-lg bg-rose-50 px-3 text-xs font-semibold text-rose-700 ring-1 ring-rose-100 transition hover:bg-rose-100"
+            >
+              Eliminar
+            </button>
+            <button
+              onClick={() => setExpanded(false)}
+              className="tap-target rounded-lg px-3 text-xs text-stone-400 transition hover:text-stone-600"
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      )}
     </li>
   )
 }
@@ -156,10 +249,10 @@ function TaskRow({
 // ─── Group block ──────────────────────────────────────────────────────────────
 
 const GROUP_META: Record<Slot, { label: string; hint: string }> = {
-  vencida: { label: 'Requiere acción', hint: 'Bloqueando el día' },
-  hoy:     { label: 'Para hoy',       hint: 'Deadline hoy' },
-  semana:  { label: 'Esta semana',    hint: 'Próximos 7 días' },
-  despues: { label: 'Después',        hint: 'Puede ignorarse ahora' },
+  vencida: { label: 'Pendiente de revisar', hint: 'Sin fecha activa' },
+  hoy:     { label: 'Para hoy',            hint: 'Cierra hoy' },
+  semana:  { label: 'Esta semana',         hint: 'Próximos 7 días' },
+  despues: { label: 'Después',             hint: 'Puede esperar' },
 }
 
 const GROUP_ORDER: Slot[] = ['vencida', 'hoy', 'semana', 'despues']
@@ -168,11 +261,15 @@ function TaskGroup({
   slot,
   tasks,
   onComplete,
+  onUpdate,
+  onDelete,
   defaultCollapsed,
 }: {
   slot: Slot
   tasks: Task[]
   onComplete: (id: string) => void
+  onUpdate: (id: string, updates: { titulo: string; fecha_limite: string | null }) => void
+  onDelete: (id: string) => void
   defaultCollapsed: boolean
 }) {
   const [collapsed, setCollapsed] = useState(defaultCollapsed)
@@ -180,7 +277,7 @@ function TaskGroup({
 
   const accentLabel =
     slot === 'vencida'
-      ? 'text-rose-600'
+      ? 'text-stone-400'
       : slot === 'hoy'
         ? 'text-blue-600'
         : 'text-stone-400'
@@ -221,7 +318,14 @@ function TaskGroup({
       {!collapsed && (
         <ul className="divide-y divide-stone-100 pb-1">
           {tasks.map((t) => (
-            <TaskRow key={t.id} task={t} slot={slot} onComplete={onComplete} />
+            <TaskRow
+              key={t.id}
+              task={t}
+              slot={slot}
+              onComplete={onComplete}
+              onUpdate={onUpdate}
+              onDelete={onDelete}
+            />
           ))}
         </ul>
       )}
@@ -252,41 +356,52 @@ export function TareasPendientes({ refreshKey = 0 }: { refreshKey?: number }) {
     setTareas((prev) => prev.filter((t) => t.id !== id))
   }, [])
 
+  // Optimistic update — update task in local list
+  const handleUpdate = useCallback(
+    (id: string, updates: { titulo: string; fecha_limite: string | null }) => {
+      setTareas((prev) =>
+        prev.map((t) => (t.id === id ? { ...t, ...updates } : t)),
+      )
+    },
+    [],
+  )
+
+  // Optimistic delete — remove from local list
+  const handleDelete = useCallback((id: string) => {
+    setTareas((prev) => prev.filter((t) => t.id !== id))
+  }, [])
+
   // Group tasks
   const groups = GROUP_ORDER.map((slot) => ({
     slot,
     tasks: tareas.filter((t) => getSlot(t.fecha_limite) === slot),
   })).filter((g) => g.tasks.length > 0)
 
-  const totalBloqueando = tareas.filter((t) => getSlot(t.fecha_limite) === 'vencida').length
-
   return (
     <Card
-      title="Operativo"
-      description={
-        totalBloqueando > 0
-          ? `${totalBloqueando} ${totalBloqueando === 1 ? 'tarea bloquea' : 'tareas bloquean'} el día`
-          : 'Pendientes abiertos'
-      }
+      title="Tareas"
+      description="Pendientes abiertos"
     >
       {loading && <Spinner />}
       {error && <ErrorMessage message={error} />}
       {!loading && !error && tareas.length === 0 && (
         <EmptyState
-          title="Sin pendientes abiertos."
-          description="No hay cola operativa fuera del foco actual."
+          title="Sin tareas pendientes."
+          description="Cuando tengas tareas activas, aparecerán aquí."
         />
       )}
       {!loading && !error && groups.length > 0 && (
         <div className="divide-y divide-stone-100">
-          {groups.map((g, i) => (
+          {groups.map((g) => (
             <TaskGroup
               key={g.slot}
               slot={g.slot}
               tasks={g.tasks}
               onComplete={handleComplete}
-              // Collapse "Después" by default; keep everything else open
-              defaultCollapsed={g.slot === 'despues' && i > 0}
+              onUpdate={handleUpdate}
+              onDelete={handleDelete}
+              // Collapse "Después" and "Pendiente de revisar" (vencida) by default
+              defaultCollapsed={g.slot === 'despues' || g.slot === 'vencida'}
             />
           ))}
         </div>

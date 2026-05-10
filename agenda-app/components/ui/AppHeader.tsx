@@ -161,15 +161,15 @@ export function AppHeader({
             </button>
           )}
 
-          {/* Foco link — desktop only (mobile uses BottomNav) */}
+          {/* Mi día link — desktop only (mobile uses BottomNav) */}
           {showFoco && (
             <Link
               href="/priorities"
-              title="Foco de hoy"
+              title="Mi día"
               className="tap-target hidden items-center gap-1.5 rounded-xl px-2.5 py-2 text-xs font-medium text-stone-500 transition hover:bg-stone-100 hover:text-stone-800 sm:flex"
             >
               <IconFocus />
-              <span>Foco</span>
+              <span>Mi día</span>
             </Link>
           )}
 

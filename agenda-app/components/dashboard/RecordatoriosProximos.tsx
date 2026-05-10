@@ -24,12 +24,12 @@ export function RecordatoriosProximos({ refreshKey = 0 }: { refreshKey?: number 
   }, [refreshKey])
 
   return (
-    <Card title="Señales próximas" description="Recordatorios activos que pueden interrumpir.">
+    <Card title="Recordatorios" description="Avisos programados próximos.">
       {loading && <Spinner />}
       {error && <ErrorMessage message={error} />}
       {!loading && !error && recordatorios.length === 0 && (
         <EmptyState
-          title="Sin señales programadas."
+          title="Sin recordatorios activos."
           description="No hay recordatorios activos que requieran atención."
         />
       )}

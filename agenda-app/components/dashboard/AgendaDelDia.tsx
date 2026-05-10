@@ -190,7 +190,7 @@ export function AgendaDelDia({ refreshKey = 0 }: { refreshKey?: number }) {
       {!loading && !error && eventos.length === 0 && (
         <EmptyState
           title="Sin reuniones hoy."
-          description="Buen espacio para foco profundo o cierre de pendientes."
+          description="Un buen momento para concentrarte o avanzar pendientes."
         />
       )}
 

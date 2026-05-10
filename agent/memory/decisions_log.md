@@ -38,6 +38,29 @@
 
 ---
 
+### [DEC-018] — Cambio de Filosofía UX: de "Foco" a "Agenda Viva Cronológica"
+
+- **Fecha**: 2026-05-10
+- **Proyecto**: PRJ-002 — Asistente IA de Agenda Ejecutiva
+- **Decidido por**: usuario
+- **Decisión**: La app abandona el concepto "Foco" como eje central de la experiencia. Se reemplaza por una agenda ejecutiva viva organizada cronológicamente. El usuario debe entender de forma natural qué tiene ahora, qué viene después, qué tiene hoy, qué se acerca en próximos días, qué debe preparar y qué tareas puede gestionar.
+- **Cambios concretos**:
+  - "Foco" → "Mi día" en navegación, headers y microcopy global
+  - Dashboard reordenado: Briefing hero → Agenda de hoy → Próximos días → Tareas abiertas → Capturar → Resumen del día
+  - Elementos pasados NO se muestran como "atrasados" en el flujo principal
+  - Tareas con deadline pasado se mueven al final (colapsadas, etiqueta neutra)
+  - `TopPrioridades` (tarjeta con ranking) eliminada del dashboard
+  - `ProximosDias` nuevo componente: eventos de los próximos 3 días
+  - `priorities/page.tsx` rediseñado: grupos temporales (Hoy/Mañana/Esta semana/Más adelante), sin score ni #posición
+  - Tareas: edición y borrado desde UI (inline en TareasPendientes)
+  - Eliminado lenguaje técnico: "score", "ranking", "prioridad manual", "foco operativo", "bloqueando el día"
+  - ExecutiveBrief: stat "foco" → "tareas"
+- **Alternativas consideradas**: Mantener "Foco" como sección separada — descartada porque el ejecutivo no entiende el concepto de forma natural.
+- **Impacto**: UX más intuitiva, menos jerga técnica, narrativa temporal clara. Backend sin cambios.
+- **Estado**: vigente
+
+---
+
 ### [DEC-001] — Iniciar con MVP Simple para el Asistente IA de Agenda Ejecutiva
 - **Fecha**: 2026-05-08
 - **Proyecto**: PRJ-002 — Asistente IA de Agenda Ejecutiva

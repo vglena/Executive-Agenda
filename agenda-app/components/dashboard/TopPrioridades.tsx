@@ -41,24 +41,21 @@ export function TopPrioridades({
 
   return (
     <Card
-      title={limit <= 3 ? 'Foco de hoy' : 'Requiere atención'}
-      description={limit <= 3 ? 'Lo que el asistente ve más sensible ahora.' : undefined}
+      title={limit <= 3 ? 'Lo próximo' : 'Tareas destacadas'}
+      description={limit <= 3 ? 'Tareas que se acercan o requieren atención.' : undefined}
     >
       {loading && <Spinner />}
       {error && <ErrorMessage message={error} />}
       {!loading && !error && tareas.length === 0 && (
         <EmptyState
-          title={mensaje ?? 'Sin foco pendiente.'}
-          description="Cuando haya señales operativas, el asistente destacará aquí lo que requiere atención."
+          title={mensaje ?? 'Sin tareas destacadas.'}
+          description="Cuando se acerquen tareas importantes, aparecerán aquí."
         />
       )}
       {!loading && !error && tareas.length > 0 && (
         <ol className="space-y-0 divide-y divide-stone-100">
           {tareas.map((t) => (
             <li key={t.id} className="flex items-start gap-3 py-3 first:pt-0 last:pb-0">
-              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-stone-950 text-[11px] font-semibold leading-none text-white tabular-nums">
-                {t.posicion}
-              </span>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-semibold leading-snug text-stone-950">{t.titulo}</p>
                 {t.justificacion && (
@@ -72,7 +69,7 @@ export function TopPrioridades({
                     <span className="hidden sm:inline">{formatTaskDeadline(t.fecha_limite, 'long')}</span>
                   </p>
                 ) : (
-                  <p className="mt-1 text-xs text-stone-400">Sin fecha · sin hora</p>
+                  <p className="mt-1 text-xs text-stone-400">Sin fecha</p>
                 )}
               </div>
             </li>

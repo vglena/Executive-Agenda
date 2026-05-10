@@ -139,7 +139,7 @@ export function ExecutiveBrief({
           <>
             <p className="mt-4 max-w-2xl text-sm leading-6 text-stone-200">
               {loading
-                ? 'Reuniendo agenda, foco y posibles bloqueos.'
+                ? 'Preparando tu agenda del día.'
                 : firstAction(summary, topPriority)}
             </p>
 
@@ -149,8 +149,8 @@ export function ExecutiveBrief({
                 <p className="mt-0.5 text-[11px] text-stone-300">reuniones</p>
               </div>
               <div className="rounded-xl bg-white/[0.08] px-2.5 py-3 ring-1 ring-white/10 sm:px-3">
-                <p className="text-xl font-semibold tabular-nums">{priorities.slice(0, 3).length}</p>
-                <p className="mt-0.5 text-[11px] text-stone-300">foco</p>
+                <p className="text-xl font-semibold tabular-nums">{tasks.filter(t => !t.fecha_limite || t.fecha_limite >= new Date().toISOString().split('T')[0]).length}</p>
+                <p className="mt-0.5 text-[11px] text-stone-300">tareas</p>
               </div>
               <div className="rounded-xl bg-white/[0.08] px-2.5 py-3 ring-1 ring-white/10 sm:px-3">
                 <p className="text-xl font-semibold tabular-nums">{conflictCount + overdueCount}</p>

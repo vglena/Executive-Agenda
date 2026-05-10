@@ -23,7 +23,7 @@ export function ResumenDiario() {
   }, [])
 
   return (
-    <Card title="Briefing completo" description="Detalle del asistente para revisar con calma.">
+    <Card title="Resumen completo" description="Contexto del día generado por el asistente.">
       {loading && <Spinner />}
       {error && <ErrorMessage message={error} />}
       {!loading && !error && !resumen && (

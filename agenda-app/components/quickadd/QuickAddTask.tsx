@@ -8,6 +8,12 @@ interface QuickAddTaskProps {
 }
 
 const PRIORIDADES = ['P1', 'P2', 'P3', 'P4'] as const
+const PRIORIDAD_LABELS: Record<typeof PRIORIDADES[number], string> = {
+  P1: 'Urgente',
+  P2: 'Importante',
+  P3: 'Normal',
+  P4: 'Cuando pueda',
+}
 
 export function QuickAddTask({ onCreated }: QuickAddTaskProps) {
   const [titulo, setTitulo] = useState('')
@@ -89,7 +95,7 @@ export function QuickAddTask({ onCreated }: QuickAddTaskProps) {
         <div className="space-y-2">
           <div>
             <label className="mb-1 block text-xs font-medium text-stone-500">
-              Ajuste manual opcional
+              Importancia
             </label>
             <select
               value={prioridad}
@@ -98,11 +104,11 @@ export function QuickAddTask({ onCreated }: QuickAddTaskProps) {
               aria-label="Ajuste manual opcional"
             >
               {PRIORIDADES.map((p) => (
-                <option key={p} value={p}>{p}</option>
+                <option key={p} value={p}>{PRIORIDAD_LABELS[p]}</option>
               ))}
             </select>
             <p className="mt-1 text-xs text-stone-400">
-              La app calcula el foco automáticamente; esto solo matiza la señal.
+              Indica cuánto pesa esta tarea en tu agenda.
             </p>
           </div>
           <textarea

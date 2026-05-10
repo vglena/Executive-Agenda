@@ -4,13 +4,13 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { getToken, clearToken } from '@/lib/api/client'
 import { AgendaDelDia } from '@/components/dashboard/AgendaDelDia'
-import { TopPrioridades } from '@/components/dashboard/TopPrioridades'
 import { TareasPendientes } from '@/components/dashboard/TareasPendientes'
 import { RecordatoriosProximos } from '@/components/dashboard/RecordatoriosProximos'
 import { ResumenDiario } from '@/components/dashboard/ResumenDiario'
 import { QuickAddPanel } from '@/components/quickadd/QuickAddPanel'
 import { ConflictosCalendario } from '@/components/dashboard/ConflictosCalendario'
 import { ExecutiveBrief } from '@/components/dashboard/ExecutiveBrief'
+import { ProximosDias } from '@/components/dashboard/ProximosDias'
 import { AppHeader } from '@/components/ui/AppHeader'
 import { BottomNav } from '@/components/ui/BottomNav'
 
@@ -96,14 +96,17 @@ export default function DashboardPage() {
       <main className="mx-auto max-w-6xl space-y-3 px-3 py-3 sm:space-y-4 sm:px-6 sm:py-6">
         <ExecutiveBrief refreshKey={refreshKey} googleConnected={googleConnected} />
 
-        <div className="grid grid-cols-1 gap-3 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
-          <TopPrioridades refreshKey={refreshKey} limit={3} />
-          <AgendaDelDia refreshKey={refreshKey} />
-        </div>
+        <AgendaDelDia refreshKey={refreshKey} />
+
+        <ProximosDias refreshKey={refreshKey} />
+
+        <TareasPendientes refreshKey={refreshKey} />
 
         <div id="quickadd" className="scroll-mt-16">
           <QuickAddPanel onCreated={handleCreated} />
         </div>
+
+        <ResumenDiario />
 
         {googleConnected && (
           <ConflictosCalendario
@@ -112,12 +115,7 @@ export default function DashboardPage() {
           />
         )}
 
-        <ResumenDiario />
-
-        <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
-          <TareasPendientes refreshKey={refreshKey} />
-          <RecordatoriosProximos refreshKey={refreshKey} />
-        </div>
+        <RecordatoriosProximos refreshKey={refreshKey} />
       </main>
 
       <BottomNav />

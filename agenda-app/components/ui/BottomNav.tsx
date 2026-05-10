@@ -25,12 +25,12 @@ const navItems: NavItem[] = [
   },
   {
     href: '/priorities',
-    label: 'Foco',
+    label: 'Mi día',
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="9" />
-        <circle cx="12" cy="12" r="4" />
-        <circle cx="12" cy="12" r="1" fill="currentColor" stroke="none" />
+        <line x1="12" y1="8" x2="12" y2="12" />
+        <line x1="12" y1="12" x2="15" y2="14" />
       </svg>
     ),
   },
