@@ -109,6 +109,7 @@ function EventDetail({
   const [saving, setSaving] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [delConfirm, setDelConfirm] = useState(false)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
 
   const duration = durationLabel(ev.hora_inicio, ev.hora_fin)
 
@@ -131,11 +132,14 @@ function EventDetail({
 
   async function handleDelete() {
     setDeleting(true)
+    setDeleteError(null)
     try {
       await apiFetch(`/api/events/${ev.id}`, { method: 'DELETE' })
       onUpdated()
       onClose()
-    } catch { /* silently */ } finally { setDeleting(false) }
+    } catch (err) {
+      setDeleteError(err instanceof Error ? err.message : 'Error al borrar')
+    } finally { setDeleting(false) }
   }
 
   if (view === 'edit') {
@@ -281,6 +285,9 @@ function EventDetail({
             Cancelar
           </button>
         )}
+        {deleteError && (
+          <p className="text-center text-xs text-rose-600">{deleteError}</p>
+        )}
       </div>
     </div>
   )
@@ -304,6 +311,7 @@ function TaskDetail({
   const [completing, setCompleting] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [delConfirm, setDelConfirm] = useState(false)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
 
   const deadline = deadlineLabel(task.fecha_limite)
   const urgency = urgencyLabel(task.prioridad_manual)
@@ -337,11 +345,14 @@ function TaskDetail({
 
   async function handleDelete() {
     setDeleting(true)
+    setDeleteError(null)
     try {
       await apiFetch(`/api/tasks/${task.id}`, { method: 'DELETE' })
       onUpdated()
       onClose()
-    } catch { /* silently */ } finally { setDeleting(false) }
+    } catch (err) {
+      setDeleteError(err instanceof Error ? err.message : 'Error al borrar')
+    } finally { setDeleting(false) }
   }
 
   if (view === 'edit') {
@@ -470,6 +481,9 @@ function TaskDetail({
           >
             Cancelar
           </button>
+        )}
+        {deleteError && (
+          <p className="text-center text-xs text-rose-600">{deleteError}</p>
         )}
       </div>
     </div>
