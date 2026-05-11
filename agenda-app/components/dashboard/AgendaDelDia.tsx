@@ -215,13 +215,13 @@ export function AgendaDelDia({ refreshKey = 0, onEventTap, onCrear }: { refreshK
         <h2 className="mb-3 text-sm font-semibold text-stone-950">Hoy</h2>
         <div className="rounded-xl border border-dashed border-stone-200 px-4 py-5 text-center">
           <p className="text-sm text-stone-400">Sin reuniones agendadas</p>
-          <p className="mt-0.5 text-xs text-stone-300">D\u00eda libre — ideal para trabajo de fondo</p>
+          <p className="mt-0.5 text-xs text-stone-300">Día libre — ideal para trabajo de fondo</p>
           {onCrear && (
             <button
               onClick={onCrear}
               className="mt-3 rounded-xl bg-stone-950 px-4 py-2 text-xs font-semibold text-white transition hover:bg-stone-800"
             >
-              + Agendar reuni\u00f3n
+              + Agendar reunión
             </button>
           )}
         </div>

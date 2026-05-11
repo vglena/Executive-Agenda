@@ -82,6 +82,8 @@ export interface AppHeaderProps {
   onSync?: () => void
   /** Callback to open the creation modal */
   onCrear?: () => void
+  /** Callback to open the calendar */
+  onCalendar?: () => void
   /** Whether the sign-out button should appear */
   showSignOut?: boolean
   onSignOut?: () => void
@@ -97,6 +99,7 @@ export function AppHeader({
   syncing = false,
   onSync,
   onCrear,
+  onCalendar,
   showSignOut = true,
   onSignOut,
   syncMessage,
@@ -127,6 +130,23 @@ export function AppHeader({
 
         {/* Right — actions */}
         <div className="flex shrink-0 items-center gap-1">
+
+          {/* Calendario — icon button */}
+          {onCalendar && (
+            <button
+              onClick={onCalendar}
+              title="Abrir calendario"
+              className="tap-target flex items-center justify-center rounded-xl p-2 text-stone-500 transition hover:bg-stone-100 hover:text-stone-900"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                <line x1="16" y1="2" x2="16" y2="6" />
+                <line x1="8" y1="2" x2="8" y2="6" />
+                <line x1="3" y1="10" x2="21" y2="10" />
+              </svg>
+              <span className="sr-only">Calendario</span>
+            </button>
+          )}
 
           {/* Crear — primary action */}
           {onCrear && (

@@ -4,8 +4,6 @@ import { useEffect, useState } from 'react'
 import { apiFetch } from '@/lib/api/client'
 import type { AgendaEvent, Task, Reminder } from '@/lib/types/api'
 
-const IS_DEV = process.env.NODE_ENV === 'development'
-
 function todayISO(): string {
   return new Date().toISOString().split('T')[0]
 }
@@ -31,6 +29,7 @@ export function BriefEjecutivo({ refreshKey = 0 }: { refreshKey?: number }) {
   const [data, setData] = useState<CockpitData | null>(null)
 
   useEffect(() => {
+    const isDemo = process.env.NODE_ENV === 'development' || window.location.search.includes('demo')
     const today = todayISO()
     Promise.allSettled([
       apiFetch<{ eventos: AgendaEvent[] }>(`/api/events?fecha=${today}`).then((d) => d.eventos),
@@ -44,13 +43,13 @@ export function BriefEjecutivo({ refreshKey = 0 }: { refreshKey?: number }) {
       const reminderCount: number = remRes.status === 'fulfilled' ? (remRes.value as number) : 0
 
       // ── Dev demo ──
-      if (IS_DEV && events.length === 0) {
+      if (isDemo && events.length === 0) {
         events = [
           { id: '__d1', titulo: 'Revisi\u00f3n del equipo', fecha: today, hora_inicio: '12:00', hora_fin: '13:00', descripcion: null, ubicacion: 'Google Meet', estado: 'activo', conflicto_detectado: false, created_at: '' },
           { id: '__d2', titulo: 'Llamada con cliente estrat\u00e9gico', fecha: today, hora_inicio: '14:00', hora_fin: '15:00', descripcion: null, ubicacion: null, estado: 'activo', conflicto_detectado: false, created_at: '' },
         ]
       }
-      if (IS_DEV && tasks.length === 0) {
+      if (isDemo && tasks.length === 0) {
         tasks = [
           { id: '__t1', titulo: 'Preparar propuesta Q3', descripcion: null, fecha_limite: '2026-05-10', prioridad_manual: 'P1', estado: 'pendiente', created_at: '', completed_at: null },
           { id: '__t2', titulo: 'Revisar contrato proveedor', descripcion: null, fecha_limite: today, prioridad_manual: 'P2', estado: 'pendiente', created_at: '', completed_at: null },

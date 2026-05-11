@@ -11,6 +11,7 @@ import { CrearModal } from '@/components/dashboard/CrearModal'
 import { DetalleModal, DetalleItem } from '@/components/dashboard/DetalleModal'
 import { VistaEjecutivaSemana } from '@/components/dashboard/VistaEjecutivaSemana'
 import { PrepRecomendada } from '@/components/dashboard/PrepRecomendada'
+import { CalendarioModal } from '@/components/dashboard/CalendarioModal'
 import { AppHeader } from '@/components/ui/AppHeader'
 
 export default function DashboardPage() {
@@ -21,6 +22,8 @@ export default function DashboardPage() {
   const [syncing, setSyncing] = useState(false)
   const [syncMsg, setSyncMsg] = useState<string | null>(null)
   const [crearOpen, setCrearOpen] = useState(false)
+  const [calOpen, setCalOpen] = useState(false)
+  const [isDemo, setIsDemo] = useState(false)
   const [detalleItem, setDetalleItem] = useState<DetalleItem | null>(null)
 
   useEffect(() => {
@@ -28,6 +31,7 @@ export default function DashboardPage() {
       router.replace('/login')
     } else {
       setReady(true)
+      setIsDemo(window.location.search.includes('demo'))
       fetch('/api/calendar/status', {
         headers: { Authorization: `Bearer ${getToken()}` },
       })
@@ -93,7 +97,14 @@ export default function DashboardPage() {
         onSignOut={handleLogout}
         syncMessage={syncMsg}
         onCrear={() => setCrearOpen(true)}
+        onCalendar={() => setCalOpen(true)}
       />
+
+      {isDemo && (
+        <div className="border-b border-amber-100 bg-amber-50 px-4 py-1.5 text-center text-xs font-semibold text-amber-700">
+          Modo demo — los datos son ficticios
+        </div>
+      )}
 
       <main className="mx-auto max-w-2xl px-4 py-4 sm:px-6 sm:py-6">
         {/* Brief ejecutivo: 2–3 frases sobre el día */}
@@ -135,6 +146,15 @@ export default function DashboardPage() {
           onCrear={() => setCrearOpen(true)}
         />
       </main>
+
+      {/* Modal de calendario */}
+      <CalendarioModal
+        open={calOpen}
+        onClose={() => setCalOpen(false)}
+        onCrear={() => { setCalOpen(false); setCrearOpen(true) }}
+        onEventTap={(ev) => { setCalOpen(false); setDetalleItem({ type: 'event', data: ev }) }}
+        onTaskTap={(task) => { setCalOpen(false); setDetalleItem({ type: 'task', data: task }) }}
+      />
 
       {/* Modal de creación */}
       <CrearModal

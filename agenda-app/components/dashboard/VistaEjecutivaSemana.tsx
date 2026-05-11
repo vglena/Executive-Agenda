@@ -4,8 +4,6 @@ import { useEffect, useState } from 'react'
 import { apiFetch } from '@/lib/api/client'
 import type { Task } from '@/lib/types/api'
 
-const IS_DEV = process.env.NODE_ENV === 'development'
-
 function todayISO(): string { return new Date().toISOString().split('T')[0] }
 function addDays(n: number): string {
   const d = new Date(); d.setDate(d.getDate() + n)
@@ -81,11 +79,12 @@ export function VistaEjecutivaSemana({
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    const isDemo = process.env.NODE_ENV === 'development' || window.location.search.includes('demo')
     setLoading(true)
     apiFetch<{ tareas: Task[] }>('/api/tasks?estado=pendiente')
       .then((d) => {
         const real = d.tareas
-        if (IS_DEV && real.length === 0) {
+        if (isDemo && real.length === 0) {
           const today = todayISO()
           const yst = addDays(-1)
           const in3s = addDays(3)

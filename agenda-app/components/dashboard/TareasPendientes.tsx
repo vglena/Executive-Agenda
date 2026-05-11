@@ -4,8 +4,6 @@ import { useEffect, useState } from 'react'
 import { apiFetch } from '@/lib/api/client'
 import { Task } from '@/lib/types/api'
 
-const IS_DEV = process.env.NODE_ENV === 'development'
-
 function todayISO(): string {
   return new Date().toISOString().split('T')[0]
 }
@@ -92,11 +90,12 @@ export function TareasPendientes({ refreshKey = 0, onTaskTap, onCrear }: { refre
   const [showLater, setShowLater] = useState(false)
 
   useEffect(() => {
+    const isDemo = process.env.NODE_ENV === 'development' || window.location.search.includes('demo')
     setLoading(true)
     apiFetch<{ tareas: Task[] }>('/api/tasks?estado=pendiente')
       .then((d) => {
         const real = d.tareas
-        if (IS_DEV && real.length === 0) {
+        if (isDemo && real.length === 0) {
           const today = todayISO()
           const y1 = new Date(); y1.setDate(y1.getDate() - 1)
           const yst = y1.toISOString().split('T')[0]
@@ -129,7 +128,7 @@ export function TareasPendientes({ refreshKey = 0, onTaskTap, onCrear }: { refre
         <h2 className="mb-3 text-sm font-semibold text-stone-950">Pendientes</h2>
         <div className="rounded-xl border border-dashed border-stone-200 px-4 py-5 text-center">
           <p className="text-sm text-stone-400">Sin tareas pendientes</p>
-          <p className="mt-0.5 text-xs text-stone-300">Todo al d\u00eda — excelente</p>
+          <p className="mt-0.5 text-xs text-stone-300">Todo al día — excelente</p>
           {onCrear && (
             <button onClick={onCrear} className="mt-3 rounded-xl bg-stone-100 px-4 py-2 text-xs font-semibold text-stone-600 transition hover:bg-stone-200">
               + Crear tarea
