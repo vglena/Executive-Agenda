@@ -211,15 +211,12 @@ export function AgendaDelDia({ refreshKey = 0, onEventTap }: { refreshKey?: numb
 
   if (eventos.length === 0) {
     return (
-      <section className="p-4 sm:p-5">
-        <h2 className="mb-1 text-sm font-semibold text-stone-950">Hoy</h2>
-        <div className="flex flex-col items-center gap-2 py-10 text-center">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" className="text-stone-300" aria-hidden>
-            <rect x="3" y="4" width="18" height="18" rx="3" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" />
-          </svg>
-          <p className="text-sm text-stone-400">Sin compromisos hoy</p>
-          <p className="text-xs text-stone-300">Día libre para avanzar lo que importa</p>
+      <section className="px-4 py-4 sm:px-5">
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-stone-950">Hoy</h2>
+          <span className="text-xs text-stone-400">Sin compromisos</span>
         </div>
+        <p className="mt-1 text-xs text-stone-300">Día libre — espacio para lo que importa</p>
       </section>
     )
   }
