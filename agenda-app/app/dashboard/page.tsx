@@ -5,14 +5,11 @@ import { useRouter } from 'next/navigation'
 import { getToken, clearToken } from '@/lib/api/client'
 import { AgendaDelDia } from '@/components/dashboard/AgendaDelDia'
 import { TareasPendientes } from '@/components/dashboard/TareasPendientes'
-import { RecordatoriosProximos } from '@/components/dashboard/RecordatoriosProximos'
-import { ResumenDiario } from '@/components/dashboard/ResumenDiario'
-import { QuickAddPanel } from '@/components/quickadd/QuickAddPanel'
-import { ConflictosCalendario } from '@/components/dashboard/ConflictosCalendario'
-import { ExecutiveBrief } from '@/components/dashboard/ExecutiveBrief'
 import { ProximosDias } from '@/components/dashboard/ProximosDias'
+import { BriefEjecutivo } from '@/components/dashboard/BriefEjecutivo'
+import { CrearModal } from '@/components/dashboard/CrearModal'
+import { DetalleModal, DetalleItem } from '@/components/dashboard/DetalleModal'
 import { AppHeader } from '@/components/ui/AppHeader'
-import { BottomNav } from '@/components/ui/BottomNav'
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -21,6 +18,8 @@ export default function DashboardPage() {
   const [googleConnected, setGoogleConnected] = useState(false)
   const [syncing, setSyncing] = useState(false)
   const [syncMsg, setSyncMsg] = useState<string | null>(null)
+  const [crearOpen, setCrearOpen] = useState(false)
+  const [detalleItem, setDetalleItem] = useState<DetalleItem | null>(null)
 
   useEffect(() => {
     if (!getToken()) {
@@ -61,11 +60,11 @@ export default function DashboardPage() {
         error?: string
       }
       if (data.ok) {
-        const { creados = 0, actualizados = 0, conflictos_detectados = 0 } = data
+        const { creados = 0, actualizados = 0 } = data
         setSyncMsg(
           creados + actualizados === 0
-            ? 'Google Calendar sincronizado - sin cambios.'
-            : `Agenda actualizada: ${creados} nuevo(s), ${actualizados} actualizado(s)${conflictos_detectados > 0 ? `, ${conflictos_detectados} conflicto(s)` : ''}.`
+            ? 'Google Calendar sincronizado — sin cambios.'
+            : `Agenda actualizada: ${creados} nuevo(s), ${actualizados} actualizado(s).`,
         )
         setRefreshKey((k) => k + 1)
       } else {
@@ -82,43 +81,58 @@ export default function DashboardPage() {
   if (!ready) return null
 
   return (
-    <div className="min-h-screen executive-shell pb-16 sm:pb-0">
+    <div className="min-h-screen executive-shell">
       <AppHeader
+        title="Mi agenda"
         showSync={googleConnected}
         syncing={syncing}
         onSync={handleSyncGoogle}
-        showFoco
         showSignOut
         onSignOut={handleLogout}
         syncMessage={syncMsg}
+        onCrear={() => setCrearOpen(true)}
       />
 
-      <main className="mx-auto max-w-6xl space-y-3 px-3 py-3 sm:space-y-4 sm:px-6 sm:py-6">
-        <ExecutiveBrief refreshKey={refreshKey} googleConnected={googleConnected} />
+      <main className="mx-auto max-w-2xl px-4 py-4 sm:px-6 sm:py-6">
+        {/* Brief ejecutivo: 2–3 frases sobre el día */}
+        <BriefEjecutivo refreshKey={refreshKey} />
 
-        <AgendaDelDia refreshKey={refreshKey} />
-
-        <ProximosDias refreshKey={refreshKey} />
-
-        <TareasPendientes refreshKey={refreshKey} />
-
-        <div id="quickadd" className="scroll-mt-16">
-          <QuickAddPanel onCreated={handleCreated} />
-        </div>
-
-        <ResumenDiario />
-
-        {googleConnected && (
-          <ConflictosCalendario
+        {/* Agenda unificada: timeline + pendientes + próximos días como un flujo continuo */}
+        <div className="mt-3 overflow-hidden rounded-2xl bg-white ring-1 ring-stone-100 divide-y divide-stone-100">
+          {/* Centro de la app: línea temporal viva del día */}
+          <AgendaDelDia
             refreshKey={refreshKey}
-            onResolved={() => setRefreshKey((k) => k + 1)}
+            onEventTap={(ev) => setDetalleItem({ type: 'event', data: ev })}
           />
-        )}
 
-        <RecordatoriosProximos refreshKey={refreshKey} />
+          {/* Tareas y pendientes */}
+          <TareasPendientes
+            refreshKey={refreshKey}
+            onTaskTap={(task) => setDetalleItem({ type: 'task', data: task })}
+          />
+
+          {/* Próximos días — continuación natural */}
+          <ProximosDias
+            refreshKey={refreshKey}
+            onEventTap={(ev) => setDetalleItem({ type: 'event', data: ev })}
+          />
+        </div>
       </main>
 
-      <BottomNav />
+      {/* Modal de creación */}
+      <CrearModal
+        open={crearOpen}
+        onClose={() => setCrearOpen(false)}
+        onCreated={handleCreated}
+      />
+
+      {/* Modal de detalle */}
+      <DetalleModal
+        item={detalleItem}
+        onClose={() => setDetalleItem(null)}
+        onUpdated={() => { setDetalleItem(null); setRefreshKey((k) => k + 1) }}
+      />
     </div>
   )
 }
+

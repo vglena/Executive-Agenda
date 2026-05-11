@@ -95,7 +95,7 @@ textarea {
 
   /* Safe area bottom padding — home indicator on iPhone/Android */
   .pb-safe {
-    padding-bottom: env(safe-area-inset-bottom, 0px);
+    padding-bottom: max(env(safe-area-inset-bottom, 0px), 1.25rem);
   }
 
   /* Section card — lightweight surface */
@@ -105,4 +105,14 @@ textarea {
     box-shadow: var(--shadow-card);
     ring: 1px solid rgba(214, 205, 190, 0.5);
   }
+
+  /* Bottom sheet slide-up */
+  .animate-slide-up {
+    animation: slide-up 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+}
+
+@keyframes slide-up {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
 }

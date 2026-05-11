@@ -46,26 +46,6 @@ function IconSignOut() {
   )
 }
 
-function IconFocus() {
-  return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
-    >
-      <circle cx="12" cy="12" r="9" />
-      <circle cx="12" cy="12" r="4" />
-      <circle cx="12" cy="12" r="1" fill="currentColor" stroke="none" />
-    </svg>
-  )
-}
-
 // ─── Shared header date formatting ───────────────────────────────────────────
 
 function HeaderDate({ compact = false }: { compact?: boolean }) {
@@ -100,8 +80,8 @@ export interface AppHeaderProps {
   showSync?: boolean
   syncing?: boolean
   onSync?: () => void
-  /** Whether foco link (desktop) should appear */
-  showFoco?: boolean
+  /** Callback to open the creation modal */
+  onCrear?: () => void
   /** Whether the sign-out button should appear */
   showSignOut?: boolean
   onSignOut?: () => void
@@ -116,7 +96,7 @@ export function AppHeader({
   showSync = false,
   syncing = false,
   onSync,
-  showFoco = false,
+  onCrear,
   showSignOut = true,
   onSignOut,
   syncMessage,
@@ -148,6 +128,20 @@ export function AppHeader({
         {/* Right — actions */}
         <div className="flex shrink-0 items-center gap-1">
 
+          {/* Crear — primary action */}
+          {onCrear && (
+            <button
+              onClick={onCrear}
+              className="tap-target flex items-center gap-1.5 rounded-xl bg-stone-950 px-3.5 py-2 text-xs font-semibold text-white transition hover:bg-stone-700 active:scale-95"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden>
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+              Crear
+            </button>
+          )}
+
           {/* Sync — icon-only on mobile, icon+label on desktop */}
           {showSync && (
             <button
@@ -159,18 +153,6 @@ export function AppHeader({
               <IconSync spinning={syncing} />
               <span className="hidden sm:inline">{syncing ? 'Actualizando…' : 'Sync'}</span>
             </button>
-          )}
-
-          {/* Mi día link — desktop only (mobile uses BottomNav) */}
-          {showFoco && (
-            <Link
-              href="/priorities"
-              title="Mi día"
-              className="tap-target hidden items-center gap-1.5 rounded-xl px-2.5 py-2 text-xs font-medium text-stone-500 transition hover:bg-stone-100 hover:text-stone-800 sm:flex"
-            >
-              <IconFocus />
-              <span>Mi día</span>
-            </Link>
           )}
 
           {/* Avatar / sign-out */}
