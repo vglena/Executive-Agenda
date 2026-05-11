@@ -31,12 +31,12 @@ function addHour(hora: string): string {
 
 // ─── Form: Evento ─────────────────────────────────────────────────────────────
 
-function FormEvento({ onCreated, onClose }: { onCreated: () => void; onClose: () => void }) {
+function FormEvento({ onCreated, onClose, defaultFecha }: { onCreated: () => void; onClose: () => void; defaultFecha?: string }) {
   const todayISO = new Date().toISOString().split('T')[0]
   const h0 = defaultHora()
 
   const [titulo, setTitulo] = useState('')
-  const [fecha, setFecha] = useState(todayISO)
+  const [fecha, setFecha] = useState(defaultFecha ?? todayISO)
   const [horaInicio, setHoraInicio] = useState(h0)
   const [horaFin, setHoraFin] = useState(addHour(h0))
   const [loading, setLoading] = useState(false)
@@ -120,10 +120,12 @@ function FormTarea({
   tipo,
   onCreated,
   onClose,
+  defaultFecha,
 }: {
   tipo: Exclude<TipoActividad, 'evento'>
   onCreated: () => void
   onClose: () => void
+  defaultFecha?: string
 }) {
   const labelMap: Record<Exclude<TipoActividad, 'evento'>, string> = {
     tarea: 'tarea',
@@ -143,7 +145,7 @@ function FormTarea({
   }
 
   const [titulo, setTitulo] = useState('')
-  const [fechaLimite, setFechaLimite] = useState('')
+  const [fechaLimite, setFechaLimite] = useState(defaultFecha ?? '')
   const [prioridad, setPrioridad] = useState<'P1' | 'P2' | 'P3'>(defaultPrioridad[tipo])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -233,10 +235,12 @@ export function CrearModal({
   open,
   onClose,
   onCreated,
+  defaultFecha,
 }: {
   open: boolean
   onClose: () => void
   onCreated: () => void
+  defaultFecha?: string
 }) {
   const [tipo, setTipo] = useState<TipoActividad | null>(null)
 
@@ -302,12 +306,13 @@ export function CrearModal({
             ))}
           </div>
         ) : tipo === 'evento' ? (
-          <FormEvento onCreated={onCreated} onClose={onClose} />
+          <FormEvento onCreated={onCreated} onClose={onClose} defaultFecha={defaultFecha} />
         ) : (
           <FormTarea
             tipo={tipo}
             onCreated={onCreated}
             onClose={onClose}
+            defaultFecha={defaultFecha}
           />
         )}
 

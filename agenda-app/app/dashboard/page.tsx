@@ -22,6 +22,7 @@ export default function DashboardPage() {
   const [syncing, setSyncing] = useState(false)
   const [syncMsg, setSyncMsg] = useState<string | null>(null)
   const [crearOpen, setCrearOpen] = useState(false)
+  const [crearDefaultFecha, setCrearDefaultFecha] = useState<string | undefined>(undefined)
   const [calOpen, setCalOpen] = useState(false)
   const [isDemo, setIsDemo] = useState(false)
   const [detalleItem, setDetalleItem] = useState<DetalleItem | null>(null)
@@ -151,7 +152,7 @@ export default function DashboardPage() {
       <CalendarioModal
         open={calOpen}
         onClose={() => setCalOpen(false)}
-        onCrear={() => { setCalOpen(false); setCrearOpen(true) }}
+        onCrear={(fecha) => { setCalOpen(false); setCrearDefaultFecha(fecha); setCrearOpen(true) }}
         onEventTap={(ev) => { setCalOpen(false); setDetalleItem({ type: 'event', data: ev }) }}
         onTaskTap={(task) => { setCalOpen(false); setDetalleItem({ type: 'task', data: task }) }}
       />
@@ -159,8 +160,9 @@ export default function DashboardPage() {
       {/* Modal de creación */}
       <CrearModal
         open={crearOpen}
-        onClose={() => setCrearOpen(false)}
+        onClose={() => { setCrearOpen(false); setCrearDefaultFecha(undefined) }}
         onCreated={handleCreated}
+        defaultFecha={crearDefaultFecha}
       />
 
       {/* Modal de detalle */}

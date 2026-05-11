@@ -485,7 +485,7 @@ export function DetalleModal({ item, onClose, onUpdated }: Props) {
     <>
       {/* Overlay */}
       <div
-        className="fixed inset-0 z-40 bg-black/40 backdrop-blur-[2px]"
+        className="fixed inset-0 z-50 bg-black/40 backdrop-blur-[2px]"
         onClick={onClose}
         aria-hidden
       />
@@ -494,7 +494,7 @@ export function DetalleModal({ item, onClose, onUpdated }: Props) {
       <div
         role="dialog"
         aria-modal="true"
-        className="fixed bottom-0 left-0 right-0 z-50 mx-auto max-w-2xl animate-slide-up rounded-t-3xl bg-white px-5 pb-safe pt-5 shadow-2xl max-h-[82vh] overflow-y-auto"
+        className="fixed bottom-0 left-0 right-0 z-[60] mx-auto max-w-2xl animate-slide-up rounded-t-3xl bg-white px-5 pb-safe pt-5 shadow-2xl max-h-[82vh] overflow-y-auto"
       >
         {/* Drag handle */}
         <div className="mb-5 flex justify-center">

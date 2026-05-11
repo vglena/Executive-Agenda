@@ -164,7 +164,7 @@ function TaskRowCal({ task, onTap }: { task: Task; onTap?: (t: Task) => void }) 
 export interface CalendarioModalProps {
   open: boolean
   onClose: () => void
-  onCrear: () => void
+  onCrear: (fecha: string) => void
   onEventTap?: (ev: AgendaEvent) => void
   onTaskTap?: (task: Task) => void
 }
@@ -208,12 +208,11 @@ export function CalendarioModal({ open, onClose, onCrear, onEventTap, onTaskTap 
       .catch(() => setAllTasks(isDemoMode() ? getDemoTasks() : []))
   }, [open])
 
-  // Load selected day's events when modal first opens
+  // Always reload today's events when modal opens (to ensure dot shows)
   useEffect(() => {
     if (!open) return
-    const today = todayISO()
-    if (!dayCache.has(today)) loadDay(today)
-  }, [open]) // eslint-disable-line react-hooks/exhaustive-deps
+    loadDay(todayISO())
+  }, [open, loadDay])
 
   function handleSelectDay(isoDate: string) {
     setSelectedDay(isoDate)
@@ -245,7 +244,7 @@ export function CalendarioModal({ open, onClose, onCrear, onEventTap, onTaskTap 
   const dayTasks = allTasks.filter((t) => t.fecha_limite === selectedDay)
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col overflow-hidden bg-white animate-slide-up">
+    <div className="fixed inset-0 z-40 flex flex-col overflow-hidden bg-white animate-slide-up">
       {/* Header */}
       <div className="flex shrink-0 items-center justify-between border-b border-stone-100 px-4 py-3">
         <h2 className="text-base font-semibold text-stone-950">Calendario</h2>
@@ -318,7 +317,7 @@ export function CalendarioModal({ open, onClose, onCrear, onEventTap, onTaskTap 
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-sm font-semibold text-stone-950">{formatDayHeader(selectedDay)}</h3>
             <button
-              onClick={() => { onCrear(); onClose() }}
+              onClick={() => { onCrear(selectedDay); onClose() }}
               className="rounded-xl bg-stone-950 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-stone-700 active:scale-95"
             >
               + Agregar
@@ -332,10 +331,10 @@ export function CalendarioModal({ open, onClose, onCrear, onEventTap, onTaskTap 
           ) : (
             <div className="space-y-1.5">
               {dayEvents.map((ev) => (
-                <EventRow key={ev.id} event={ev} onTap={(e) => { onEventTap?.(e); onClose() }} />
+                <EventRow key={ev.id} event={ev} onTap={(e) => onEventTap?.(e)} />
               ))}
               {dayTasks.map((t) => (
-                <TaskRowCal key={t.id} task={t} onTap={(tk) => { onTaskTap?.(tk); onClose() }} />
+                <TaskRowCal key={t.id} task={t} onTap={(tk) => onTaskTap?.(tk)} />
               ))}
               {dayEvents.length === 0 && dayTasks.length === 0 && (
                 <div className="py-6 text-center">
