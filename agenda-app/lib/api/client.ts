@@ -45,5 +45,8 @@ export async function apiFetch<T>(
     throw new Error((body as { error?: string }).error ?? `HTTP ${res.status}`)
   }
 
+  // 204 No Content (e.g. DELETE) — no body to parse
+  if (res.status === 204) return undefined as unknown as T
+
   return res.json() as Promise<T>
 }
