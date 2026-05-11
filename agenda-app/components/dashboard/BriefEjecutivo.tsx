@@ -20,7 +20,7 @@ function StatCell({ value, label, accent }: { value: number; label: string; acce
   return (
     <div className="flex flex-col items-center gap-0.5 py-4">
       <span className={`text-[26px] font-bold tabular-nums leading-none ${accent}`}>{value}</span>
-      <span className="mt-1 text-center text-[9px] font-semibold uppercase tracking-wide text-stone-400 leading-tight">{label}</span>
+      <span className="mt-1 w-full text-center text-[9px] font-semibold uppercase tracking-wide text-stone-400 leading-tight break-words hyphens-auto" lang="es">{label}</span>
     </div>
   )
 }
@@ -99,7 +99,7 @@ export function BriefEjecutivo({ refreshKey = 0 }: { refreshKey?: number }) {
         />
         <StatCell
           value={reminderCount}
-          label={reminderCount === 1 ? 'recorda-\ntorio' : 'recorda-\ntorios'}
+          label="avisos"
           accent={reminderCount > 0 ? 'text-amber-600' : 'text-stone-300'}
         />
       </div>
@@ -111,7 +111,7 @@ export function BriefEjecutivo({ refreshKey = 0 }: { refreshKey?: number }) {
             <div className="flex items-center gap-2 rounded-xl bg-blue-50/80 px-3 py-2">
               <span className="h-1.5 w-1.5 shrink-0 animate-pulse rounded-full bg-blue-500" />
               <p className="min-w-0 truncate text-xs font-medium text-blue-700">
-                Pr\u00f3ximo: {nextEvent.titulo} \u00b7 {nextEvent.hora_inicio}
+                Próximo: {nextEvent.titulo} · {nextEvent.hora_inicio}
               </p>
             </div>
           )}

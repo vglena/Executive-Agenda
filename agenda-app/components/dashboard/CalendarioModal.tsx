@@ -21,7 +21,8 @@ function addDaysFromToday(n: number): string {
 }
 
 function formatMonthYear(date: Date): string {
-  return date.toLocaleDateString('es', { month: 'long', year: 'numeric' })
+  const s = date.toLocaleDateString('es', { month: 'long', year: 'numeric' })
+  return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase()
 }
 
 function formatDayHeader(isoDate: string): string {
