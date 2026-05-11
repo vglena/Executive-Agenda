@@ -175,7 +175,7 @@ function PastCollapse({ items, onTap }: { items: AgendaEvent[]; onTap?: (ev: Age
 
 // ─── AgendaDelDia (TimelineHoy) ───────────────────────────────────────────────
 
-export function AgendaDelDia({ refreshKey = 0, onEventTap }: { refreshKey?: number; onEventTap?: (ev: AgendaEvent) => void }) {
+export function AgendaDelDia({ refreshKey = 0, onEventTap, onCrear }: { refreshKey?: number; onEventTap?: (ev: AgendaEvent) => void; onCrear?: () => void }) {
   const [eventos, setEventos] = useState<AgendaEvent[]>([])
   const [loading, setLoading] = useState(true)
   const [now, setNow] = useState(nowMin())
@@ -211,12 +211,20 @@ export function AgendaDelDia({ refreshKey = 0, onEventTap }: { refreshKey?: numb
 
   if (eventos.length === 0) {
     return (
-      <section className="px-4 py-4 sm:px-5">
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-stone-950">Hoy</h2>
-          <span className="text-xs text-stone-400">Sin compromisos</span>
+      <section className="p-4 sm:p-5">
+        <h2 className="mb-3 text-sm font-semibold text-stone-950">Hoy</h2>
+        <div className="rounded-xl border border-dashed border-stone-200 px-4 py-5 text-center">
+          <p className="text-sm text-stone-400">Sin reuniones agendadas</p>
+          <p className="mt-0.5 text-xs text-stone-300">D\u00eda libre — ideal para trabajo de fondo</p>
+          {onCrear && (
+            <button
+              onClick={onCrear}
+              className="mt-3 rounded-xl bg-stone-950 px-4 py-2 text-xs font-semibold text-white transition hover:bg-stone-800"
+            >
+              + Agendar reuni\u00f3n
+            </button>
+          )}
         </div>
-        <p className="mt-1 text-xs text-stone-300">Día libre — espacio para lo que importa</p>
       </section>
     )
   }

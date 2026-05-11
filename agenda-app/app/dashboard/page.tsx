@@ -9,6 +9,8 @@ import { ProximosDias } from '@/components/dashboard/ProximosDias'
 import { BriefEjecutivo } from '@/components/dashboard/BriefEjecutivo'
 import { CrearModal } from '@/components/dashboard/CrearModal'
 import { DetalleModal, DetalleItem } from '@/components/dashboard/DetalleModal'
+import { VistaEjecutivaSemana } from '@/components/dashboard/VistaEjecutivaSemana'
+import { PrepRecomendada } from '@/components/dashboard/PrepRecomendada'
 import { AppHeader } from '@/components/ui/AppHeader'
 
 export default function DashboardPage() {
@@ -103,12 +105,14 @@ export default function DashboardPage() {
           <AgendaDelDia
             refreshKey={refreshKey}
             onEventTap={(ev) => setDetalleItem({ type: 'event', data: ev })}
+            onCrear={() => setCrearOpen(true)}
           />
 
           {/* Tareas y pendientes */}
           <TareasPendientes
             refreshKey={refreshKey}
             onTaskTap={(task) => setDetalleItem({ type: 'task', data: task })}
+            onCrear={() => setCrearOpen(true)}
           />
 
           {/* Próximos días — continuación natural */}
@@ -117,6 +121,19 @@ export default function DashboardPage() {
             onEventTap={(ev) => setDetalleItem({ type: 'event', data: ev })}
           />
         </div>
+
+        {/* Vista ejecutiva de la semana: entregas + decisiones */}
+        <VistaEjecutivaSemana
+          refreshKey={refreshKey}
+          onTaskTap={(task) => setDetalleItem({ type: 'task', data: task })}
+          onCrear={() => setCrearOpen(true)}
+        />
+
+        {/* Sugerencias contextuales */}
+        <PrepRecomendada
+          refreshKey={refreshKey}
+          onCrear={() => setCrearOpen(true)}
+        />
       </main>
 
       {/* Modal de creación */}
